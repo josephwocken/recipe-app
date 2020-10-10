@@ -16,7 +16,29 @@ class CreateRecipeComponent extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('A recipe was created: ' + this.state.value);
+    const recipeToUpload = this.state.value
+    const recipe = {
+      contents: recipeToUpload,
+      name: 'some-name',
+      link: 'some-link'
+    }
+    console.log("Recipe to upload: " + JSON.stringify(recipe))
+    fetch("http://localhost:5050/recipes", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(recipe),
+    })
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log("Results: " + JSON.stringify(result))
+        },
+        (error) => {
+          console.log(error)
+        }
+      );
     event.preventDefault();
   }
 
