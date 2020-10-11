@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 class ListRecipesComponent extends React.Component {
   constructor(props) {
@@ -41,9 +42,10 @@ class ListRecipesComponent extends React.Component {
           <h1>Recipes</h1>
           <ul>
             {recipes.map(recipe => (
-              <li key={recipe.name}>
-
-                {recipe.name} - {recipe.link}
+              <li key={recipe.recipeId}>
+                <Link to={"/recipes/" + recipe.recipeId}>
+                  {recipe.recipeId} - {recipe.name}
+                </Link>
               </li>
             ))}
           </ul>

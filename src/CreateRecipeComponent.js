@@ -4,23 +4,29 @@ class CreateRecipeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 'Please create a recipe'
+      recipeName: 'Recipe Name',
+      recipeContent: 'Please create a recipe'
     };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.handleRecipeContentChange = this.handleRecipeContentChange.bind(this);
+    this.handleRecipeNameChange = this.handleRecipeNameChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
+  handleRecipeContentChange(event) {
+    this.setState({recipeContent: event.target.value});
+  }
+
+  handleRecipeNameChange(event) {
+    this.setState({recipeName: event.target.value})
   }
 
   handleSubmit(event) {
-    const recipeToUpload = this.state.value
+    const recipeName = this.state.recipeName
+    const recipeContent = this.state.recipeContent
     const recipe = {
-      contents: recipeToUpload,
-      name: 'some-name',
-      link: 'some-link'
+      name: recipeName,
+      content: recipeContent
     }
     console.log("Recipe to upload: " + JSON.stringify(recipe))
     fetch("http://localhost:5050/recipes", {
@@ -30,15 +36,14 @@ class CreateRecipeComponent extends React.Component {
       },
       body: JSON.stringify(recipe),
     })
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log("Results: " + JSON.stringify(result))
-        },
-        (error) => {
-          console.log(error)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      );
+      })
+      .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+      });
     event.preventDefault();
   }
 
@@ -46,9 +51,16 @@ class CreateRecipeComponent extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
+          Name:
+          <br></br>
+          <textarea value={this.state.recipeName} onChange={this.handleRecipeNameChange} />
+        </label>
+        <br></br>
+        <br></br>
+        <label>
           Recipe:
           <br></br>
-          <textarea value={this.state.value} onChange={this.handleChange} />
+          <textarea value={this.state.recipeContent} onChange={this.handleRecipeContentChange} />
         </label>
         <br></br>
         <input type="submit" value="Submit" />

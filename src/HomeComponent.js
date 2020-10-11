@@ -1,6 +1,7 @@
 import React from "react";
 import ListRecipesComponent from './ListRecipesComponent';
 import CreateRecipeComponent from './CreateRecipeComponent';
+import RecipeDetailsComponent from './RecipeDetailsComponent';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,9 +10,6 @@ import {
 } from "react-router-dom";
 
 class HomeComponent extends React.Component {
-  constructor(props) {
-    super(props)
-  }
 
   render() {
     return (
@@ -34,6 +32,9 @@ class HomeComponent extends React.Component {
             </Route>
             <Route path="/createrecipe">
               <CreateRecipeComponent />
+            </Route>
+            <Route path="/recipes/:recipeId" something={this.props.params}>
+              <RecipeDetailsComponent />
             </Route>
           </Switch>
         </div>
