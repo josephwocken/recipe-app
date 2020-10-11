@@ -1,8 +1,44 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Configure front end server (ubuntu)
+```
+sudo su
+mkdir -p /opt/recipe-app/build
+cp Build.zip /opt/recipe-app/build
+cd /opt/recipe-app/build
+apt install xsel
+apt-get install unzip
+unzip Build.zip
 
-In the project directory, you can run:
+# node
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# serve
+npm install -g serve
+
+# start
+cd /opt/recipe-app
+serve -s build -l 443 & //redirect stdout and stderr to log?
+```
+
+
+### Build
+```
+PS C:\Users\josep\dev\recipe-app> $compress = @{
+>> Path = "build\*"
+>> CompressionLevel = "Fastest"
+>> DestinationPath = ".\Build.zip"
+>> }
+PS C:\Users\josep\dev\recipe-app> Compress-Archive @compress
+```
+
+### Copy front end app to server
+```
+PS C:\Users\josep\dev\recipe-app> scp -i <pem-key-path> Build.zip ubuntu@<host>:/tmp/Build.zip
+
+Build.zip                                                                                         100%  246KB 761.1KB/s   00:00
+```
 
 ### `npm start`
 

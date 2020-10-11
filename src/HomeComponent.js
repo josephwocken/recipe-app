@@ -2,6 +2,7 @@ import React from "react";
 import ListRecipesComponent from './ListRecipesComponent';
 import CreateRecipeComponent from './CreateRecipeComponent';
 import RecipeDetailsComponent from './RecipeDetailsComponent';
+import HealthComponent from './HealthComponent';
 import {
   BrowserRouter as Router,
   Switch,
@@ -35,6 +36,9 @@ class HomeComponent extends React.Component {
             </Route>
             <Route path="/recipes/:recipeId" something={this.props.params}>
               <RecipeDetailsComponent />
+            </Route>
+            <Route path="/health">
+              <HealthComponent />
             </Route>
           </Switch>
         </div>
