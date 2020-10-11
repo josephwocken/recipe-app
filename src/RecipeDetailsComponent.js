@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import { useLocation } from "react-router-dom";
 
 function usePageViews() {
@@ -9,16 +9,39 @@ function usePageViews() {
   return recipeId;
 }
 
-//TODO: not working
-async function getRecipeDetails(recipeId) {
-  const response = await fetch("http://localhost:5050/recipes/" + recipeId)
-  return response.json();
-}
-
-export default function RecipeDetailsComponent() {
+//TODO: this is hitting the api constantly
+export default function RecipeDetailsComponent(props) {
+  const [recipe, setRecipe] = useState('');
+  const [fetchAttempts, setFetchAttemps] = useState(0);
   var id = usePageViews();
-  var recipeDetails = getRecipeDetails(id);
-  console.log("id: " + id);
-  console.log("details: " + JSON.stringify(recipeDetails));
-  return (<div/>)
+  if (!(fetchAttempts > 0)) {
+    fetch("http://localhost:5050/recipes/" + id)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            setRecipe(result);
+            setFetchAttemps(1);
+            console.log("result: " + JSON.stringify(result));
+          },
+          (error) => {
+            console.log("error: " + error);
+          }
+        )
+  }
+
+  if (recipe) {
+    return (
+      <div>
+        {recipe.name}
+        <br></br>
+        {recipe.content}
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        Loading...
+      </div>
+    )
+  }
 }
