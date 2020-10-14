@@ -1,4 +1,5 @@
 import React from 'react';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { Link } from "react-router-dom";
 
 class ListRecipesComponent extends React.Component {
@@ -43,16 +44,16 @@ class ListRecipesComponent extends React.Component {
     } else {
       return (
         <div>
-          <h1>Recipes</h1>
-          <ul>
+          <h2>Recipes</h2>
+          <ListGroup>
             {recipes.map(recipe => (
-              <li key={recipe.recipeId}>
+              <ListGroup.Item>
                 <Link to={"/recipes/" + recipe.recipeId}>
                   {recipe.recipeId} - {recipe.name}
                 </Link>
-              </li>
+              </ListGroup.Item>
             ))}
-          </ul>
+          </ListGroup>
         </div>
       );
     }

@@ -3,6 +3,7 @@ import ListRecipesComponent from './ListRecipesComponent';
 import CreateRecipeComponent from './CreateRecipeComponent';
 import RecipeDetailsComponent from './RecipeDetailsComponent';
 import HealthComponent from './HealthComponent';
+import Nav from 'react-bootstrap/Nav';
 import {
   BrowserRouter as Router,
   Switch,
@@ -16,16 +17,14 @@ class HomeComponent extends React.Component {
     return (
       <Router>
         <div>
-          <nav>
-            <ul>
-              <li>
-                <Link to="/listrecipes">List Recipes</Link>
-              </li>
-              <li>
-                <Link to="/createrecipe">Create Recipe</Link>
-              </li>
-            </ul>
-          </nav>
+          <Nav variant="tabs">
+            <Nav.Item>
+              <Nav.Link><Link to="/listrecipes">List Recipes</Link></Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link><Link to="/createrecipe">Create Recipe</Link></Nav.Link>
+            </Nav.Item>
+          </Nav>
 
           <Switch>
             <Route path="/listrecipes">

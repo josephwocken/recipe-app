@@ -36,7 +36,7 @@ export default function RecipeDetailsComponent(props) {
   if (recipe) {
     return (
       <div>
-        {recipe.name}
+        <h2>{recipe.name}</h2>
         <br></br>
         {recipe.content}
       </div>

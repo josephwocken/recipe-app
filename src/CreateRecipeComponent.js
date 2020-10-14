@@ -1,11 +1,14 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 class CreateRecipeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      recipeName: 'Recipe Name',
-      recipeContent: 'Please create a recipe'
+      recipeName: '',
+      recipeContent: '',
+      isRecipeSubmitted: false
     };
 
     this.handleRecipeContentChange = this.handleRecipeContentChange.bind(this);
@@ -48,28 +51,45 @@ class CreateRecipeComponent extends React.Component {
       .catch(error => {
         console.error('There has been a problem with your fetch operation:', error);
       });
+    this.setState({isRecipeSubmitted: true})
     event.preventDefault();
   }
 
   render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <br></br>
-          <textarea value={this.state.recipeName} onChange={this.handleRecipeNameChange} />
-        </label>
-        <br></br>
-        <br></br>
-        <label>
-          Recipe:
-          <br></br>
-          <textarea value={this.state.recipeContent} onChange={this.handleRecipeContentChange} />
-        </label>
-        <br></br>
-        <input type="submit" value="Submit" />
-      </form>
-    )
+    const { isRecipeSubmitted } = this.state;
+      if (!isRecipeSubmitted) {
+        return (
+          <Form onSubmit={this.handleSubmit}>
+            <Form.Group controlId="createRecipeForm.ControlTextarea1">
+              <Form.Label>Recipe Name</Form.Label>
+              <Form.Control as="textarea" rows="1" onChange={this.handleRecipeNameChange} />
+            </Form.Group>
+            <Form.Group controlId="crateRecipeForm.ControlTextarea2">
+              <Form.Label>Recipe Contents</Form.Label>
+              <Form.Control as="textarea" rows="5" onChange={this.handleRecipeContentChange} />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        )
+      } else {
+        return (
+          <Form onSubmit={this.handleSubmit}>
+            <Form.Group controlId="createRecipeForm.ControlTextarea1">
+              <Form.Label>Recipe Name</Form.Label>
+              <Form.Control as="textarea" rows="1" onChange={this.handleRecipeNameChange} />
+            </Form.Group>
+            <Form.Group controlId="crateRecipeForm.ControlTextarea2">
+              <Form.Label>Recipe Contents</Form.Label>
+              <Form.Control as="textarea" rows="5" onChange={this.handleRecipeContentChange} />
+            </Form.Group>
+            <Button variant="primary" type="submit" disabled>
+              Submit
+            </Button>
+          </Form>
+        )
+      }
   }
 }
 
