@@ -22,14 +22,21 @@ cd /opt/recipe-app
 serve -s build -l 443 & //redirect stdout and stderr to log?
 ```
 
+### Configure backend server (ubuntu)
+```
+sudo apt install default-jdk
+```
 
 ### Build
 ```
+cd ~/dev/recipes-app
+npm run build
+rm Build.zip
 PS C:\Users\josep\dev\recipe-app> $compress = @{
->> Path = "build\*"
->> CompressionLevel = "Fastest"
->> DestinationPath = ".\Build.zip"
->> }
+Path = "build\*"
+CompressionLevel = "Fastest"
+DestinationPath = ".\Build.zip"
+}
 PS C:\Users\josep\dev\recipe-app> Compress-Archive @compress
 ```
 

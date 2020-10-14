@@ -29,7 +29,11 @@ class CreateRecipeComponent extends React.Component {
       content: recipeContent
     }
     console.log("Recipe to upload: " + JSON.stringify(recipe))
-    fetch("http://localhost:5050/recipes", {
+    var recipesUrl = 'http://localhost:5050'
+    if (process.env.NODE_ENV === 'production') {
+      recipesUrl = 'https://www.sophiesrecipes.com:5050'
+    }
+    fetch(recipesUrl + "/recipes", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

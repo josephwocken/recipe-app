@@ -14,8 +14,12 @@ export default function RecipeDetailsComponent(props) {
   const [recipe, setRecipe] = useState('');
   const [fetchAttempts, setFetchAttemps] = useState(0);
   var id = usePageViews();
+  var recipesUrl = 'http://localhost:5050'
+  if (process.env.NODE_ENV === 'production') {
+    recipesUrl = 'https://www.sophiesrecipes.com:5050'
+  }
   if (!(fetchAttempts > 0)) {
-    fetch("http://localhost:5050/recipes/" + id)
+    fetch(recipesUrl + "/recipes/" + id)
         .then(res => res.json())
         .then(
           (result) => {
