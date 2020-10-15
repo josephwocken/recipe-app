@@ -72,11 +72,11 @@ class CreateRecipeComponent extends React.Component {
             <Form.Label>Recipe Name</Form.Label>
             <Form.Control as="textarea" rows="1" onChange={this.handleRecipeNameChange} />
           </Form.Group>
-          <Form.Group controlId="crateRecipeForm.ControlTextarea2">
+          <Form.Group controlId="createRecipeForm.ControlTextarea2">
             <Form.Label>Recipe Contents</Form.Label>
             <Form.Control as="textarea" rows="5" onChange={this.handleRecipeContentChange} />
           </Form.Group>
-          <Form.Group controlId="crateRecipeForm.ControlTextarea3">
+          <Form.Group controlId="createRecipeForm.ControlTextarea3">
             <Form.Label>Password</Form.Label>
             <Form.Control as="textarea" rows="1" onChange={this.handlePasswordChange} />
           </Form.Group>
