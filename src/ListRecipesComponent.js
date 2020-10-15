@@ -47,7 +47,7 @@ class ListRecipesComponent extends React.Component {
           <h2>Recipes</h2>
           <ListGroup>
             {recipes.map(recipe => (
-              <ListGroup.Item>
+              <ListGroup.Item key={recipe.recipeId}>
                 <Link to={"/recipes/" + recipe.recipeId}>
                   {recipe.recipeId} - {recipe.name}
                 </Link>
