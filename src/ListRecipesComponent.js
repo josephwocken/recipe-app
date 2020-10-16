@@ -1,5 +1,9 @@
 import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 
 class ListRecipesComponent extends React.Component {
@@ -8,11 +12,14 @@ class ListRecipesComponent extends React.Component {
     this.state = {
       error: null,
       isLoaded: false,
-      recipes: []
+      recipes: [],
+      recipeDeleted: false
     };
+    this.handleDelete = this.handleDelete.bind(this);
+    this.fetchRecipes = this.fetchRecipes.bind(this);
   }
 
-  componentDidMount() {
+  fetchRecipes() {
     var recipesUrl = 'http://localhost:5050'
     if (process.env.NODE_ENV === 'production') {
       recipesUrl = 'https://www.sophiesrecipes.com:5050'
@@ -35,8 +42,39 @@ class ListRecipesComponent extends React.Component {
       );
   }
 
+  componentDidMount() {
+    this.fetchRecipes();
+  }
+
+  componentDidUpdate() {
+    this.fetchRecipes();
+  }
+
+  handleDelete(recipeId) {
+    console.log("deleting recipe with id: " + recipeId)
+    var recipesUrl = 'http://localhost:5050';
+    if (process.env.NODE_ENV === 'production') {
+      recipesUrl = 'https://www.sophiesrecipes.com:5050';
+    }
+    fetch(recipesUrl + "/recipes/" + recipeId, {
+      method: 'DELETE',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to delete recipe')
+        } else {
+          this.setState({
+            recipeDeleted: true
+          });
+        }
+      })
+      .catch(error => {
+        alert('Failed to delete recipe')
+      })
+  }
+
   render() {
-    const { error, isLoaded, recipes } = this.state;
+    const { error, isLoaded, recipes, recipeDeleted } = this.state;
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
@@ -44,13 +82,23 @@ class ListRecipesComponent extends React.Component {
     } else {
       return (
         <div>
-          <h2>Recipes</h2>
           <ListGroup>
             {recipes.map(recipe => (
               <ListGroup.Item key={recipe.recipeId}>
-                <Link to={"/recipes/" + recipe.recipeId}>
-                  {recipe.recipeId} - {recipe.name}
-                </Link>
+                <Container>
+                  <Row>
+                    <Col xs={6}>
+                      <Link to={"/recipes/" + recipe.recipeId}>
+                        {recipe.recipeId} - {recipe.name}
+                      </Link>
+                    </Col>
+                    <Col>
+                      <Button variant="secondary" onClick={() => this.handleDelete(recipe.recipeId)}>
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                </Container>
               </ListGroup.Item>
             ))}
           </ListGroup>

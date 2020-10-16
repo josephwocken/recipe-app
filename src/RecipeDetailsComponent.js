@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import Container from 'react-bootstrap/Container';
+import './RecipeDetailsComponent.css'
 
 function usePageViews() {
   let location = useLocation();
@@ -10,6 +12,38 @@ function usePageViews() {
   let recipeId = path.split("/")[2];
   console.log("path: " + path + ", recipe id: " + recipeId);
   return recipeId;
+}
+
+function handleSubmit(updatedRecipeContent, recipeId, show) {
+  console.log("show? " + show)
+  //this isn't working
+  if (show === true) {
+    return
+  }
+  const recipe = {
+    content: updatedRecipeContent
+  }
+  console.log("Recipe to upload: " + JSON.stringify(recipe));
+  var recipesUrl = 'http://localhost:5050';
+  if (process.env.NODE_ENV === 'production') {
+    recipesUrl = 'https://www.sophiesrecipes.com:5050';
+  }
+  fetch(recipesUrl + "/recipes/" + recipeId, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(recipe),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    })
+    .catch(error => {
+      console.error('There has been a problem with the update operation:', error);
+      // alert('Password did not work.');
+    });
 }
 
 //TODO: this is hitting the api at least 5 times
@@ -44,15 +78,17 @@ export default function RecipeDetailsComponent(props) {
 
   if (recipe) {
     return (
-      <div>
+      <Container>
+        <br></br>
         <h2>{recipe.name}</h2>
         <br></br>
-        {recipe.content}
+        <p className="RecipeDetails">{recipe.content}</p>
         <br></br>
+        {/*
         <Button variant="primary" type="submit" onClick={handleShow}>
           Edit
         </Button>
-
+        */}
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>{recipe.name}</Modal.Title>
@@ -60,6 +96,7 @@ export default function RecipeDetailsComponent(props) {
           <Modal.Body>
             {/*
             TODO: handle submitting the updated recipe to the api
+            TODO: form is being submitted even without showing modal
             */}
             <Form>
               <Form.Group controlId="updateRecipeForm.ControlTextarea1">
@@ -68,6 +105,9 @@ export default function RecipeDetailsComponent(props) {
                   onChange={event => setRecipeContent(event.target.value)}
                   body={recipe.content}
                 />
+                <Button variant="primary" type="submit">
+                  Save Changes
+                </Button>
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -75,12 +115,10 @@ export default function RecipeDetailsComponent(props) {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Save Changes
-            </Button>
+
           </Modal.Footer>
         </Modal>
-      </div>
+      </Container>
     )
   } else {
     return (

@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
 
 class CreateRecipeComponent extends React.Component {
   constructor(props) {
@@ -67,24 +68,27 @@ class CreateRecipeComponent extends React.Component {
   render() {
     const { isRecipeSubmitted } = this.state;
      return (
-        <Form onSubmit={this.handleSubmit}>
-          <Form.Group controlId="createRecipeForm.ControlTextarea1">
-            <Form.Label>Recipe Name</Form.Label>
-            <Form.Control as="textarea" rows="1" onChange={this.handleRecipeNameChange} />
-          </Form.Group>
-          <Form.Group controlId="createRecipeForm.ControlTextarea2">
-            <Form.Label>Recipe Contents</Form.Label>
-            <Form.Control as="textarea" rows="5" onChange={this.handleRecipeContentChange} />
-          </Form.Group>
-          <Form.Group controlId="createRecipeForm.ControlTextarea3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control as="textarea" rows="1" onChange={this.handlePasswordChange} />
-          </Form.Group>
-          {isRecipeSubmitted
-            ? <Button variant="primary" type="submit" disabled>Submit</Button>
-            : <Button variant="primary" type="submit">Submit</Button>
-          }
-        </Form>
+       <Container>
+         <br></br>
+          <Form onSubmit={this.handleSubmit}>
+            <Form.Group controlId="createRecipeForm.ControlTextarea1">
+              <Form.Label>Recipe Name</Form.Label>
+              <Form.Control as="textarea" rows="1" onChange={this.handleRecipeNameChange} />
+            </Form.Group>
+            <Form.Group controlId="createRecipeForm.ControlTextarea2">
+              <Form.Label>Recipe Contents</Form.Label>
+              <Form.Control as="textarea" rows="5" onChange={this.handleRecipeContentChange} />
+            </Form.Group>
+            <Form.Group controlId="createRecipeForm.ControlTextarea3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control as="textarea" rows="1" onChange={this.handlePasswordChange} />
+            </Form.Group>
+            {isRecipeSubmitted
+              ? <Button variant="primary" type="submit" disabled>Submit</Button>
+              : <Button variant="primary" type="submit">Submit</Button>
+            }
+          </Form>
+        </Container>
       )
   }
 }
