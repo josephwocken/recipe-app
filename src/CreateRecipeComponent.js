@@ -51,6 +51,8 @@ class CreateRecipeComponent extends React.Component {
   handlePictureSubmit(recipeId) {
     const pictures = this.state.pictures;
     const formData = new FormData()
+    // this has to match val uploadedImageFile: UploadedFile = form.file("image")
+    // in the ratpack server
     formData.append('image', pictures[0])
     console.log("form data: " + formData);
     console.log("recipe id: " + recipeId);

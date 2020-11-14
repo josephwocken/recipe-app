@@ -52,6 +52,7 @@ export default function RecipeDetailsComponent(props) {
   const [fetchAttempts, setFetchAttemps] = useState(0);
   const [show, setShow] = useState(false);
   const [recipeContent, setRecipeContent] = useState('')
+  const [imageUrl, setImageUrl] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -74,15 +75,25 @@ export default function RecipeDetailsComponent(props) {
             console.log("error: " + error);
           }
         )
+
+    fetch(recipesUrl + '/images/' + id)
+            .then(response => response.blob())
+            .then(images => {
+                // Then create a local URL for that image and print it
+                let imageUrl = URL.createObjectURL(images);
+                console.log(imageUrl);
+                setImageUrl(imageUrl);
+            })
   }
 
-  if (recipe) {
+  if (recipe && imageUrl) {
     return (
       <Container>
         <br></br>
         <h2>{recipe.name}</h2>
         <br></br>
         <p className="RecipeDetails">{recipe.content}</p>
+        <img src={imageUrl}></img>
         <br></br>
         {/*
         <Button variant="primary" type="submit" onClick={handleShow}>
