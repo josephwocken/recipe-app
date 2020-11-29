@@ -33,7 +33,7 @@ function handleSubmit(updatedRecipeContent, updatedRecipeName, password, recipeI
     })
     .catch(error => {
       console.error('There has been a problem with the update operation:', error);
-      alert('Password did not work.');
+      // alert('Password did not work.'); why is this not working?
     });
 }
 
