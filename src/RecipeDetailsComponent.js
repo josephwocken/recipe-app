@@ -1,29 +1,19 @@
-import React, { useState } from 'react';
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Container from 'react-bootstrap/Container';
-import './RecipeDetailsComponent.css'
+import Image from 'react-bootstrap/Image';
+import './RecipeDetailsComponent.css';
 
-function usePageViews() {
-  let location = useLocation();
-  let path = location.pathname;
-  let recipeId = path.split("/")[2];
-  console.log("path: " + path + ", recipe id: " + recipeId);
-  return recipeId;
-}
-
-function handleSubmit(updatedRecipeContent, recipeId, show) {
-  console.log("show? " + show)
-  //this isn't working
-  if (show === true) {
-    return
-  }
+function handleSubmit(updatedRecipeContent, updatedRecipeName, password, recipeId) {
   const recipe = {
-    content: updatedRecipeContent
+    recipeId: recipeId,
+    name: updatedRecipeName,
+    content: updatedRecipeContent,
+    password: password
   }
-  console.log("Recipe to upload: " + JSON.stringify(recipe));
   var recipesUrl = 'http://localhost:5050';
   if (process.env.NODE_ENV === 'production') {
     recipesUrl = 'https://www.sophiesrecipes.com:5050';
@@ -37,54 +27,68 @@ function handleSubmit(updatedRecipeContent, recipeId, show) {
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        console.log(`Error with response: ${response.statusText}`)
+        throw new Error('Network response was not ok.');
       }
     })
     .catch(error => {
       console.error('There has been a problem with the update operation:', error);
-      // alert('Password did not work.');
+      alert('Password did not work.');
     });
 }
 
 //TODO: this is hitting the api at least 5 times
-export default function RecipeDetailsComponent(props) {
+export default function RecipeDetailsComponent() {
   const [recipe, setRecipe] = useState('');
-  const [fetchAttempts, setFetchAttemps] = useState(0);
   const [show, setShow] = useState(false);
-  const [recipeContent, setRecipeContent] = useState('')
+  const [recipeName, setRecipeName] = useState('');
+  const [recipeContent, setRecipeContent] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [recipeHasImage, setRecipeHasImage] = useState(true);
+  const [password, setPassword] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  var id = usePageViews();
+  let { recipeId } = useParams();
+
   var recipesUrl = 'http://localhost:5050'
   if (process.env.NODE_ENV === 'production') {
     recipesUrl = 'https://www.sophiesrecipes.com:5050'
   }
-  if (!(fetchAttempts > 0)) {
-    fetch(recipesUrl + "/recipes/" + id)
-        .then(res => res.json())
-        .then(
-          (result) => {
-            setRecipe(result);
-            setFetchAttemps(1);
-            console.log("result: " + JSON.stringify(result));
-          },
-          (error) => {
-            console.log("error: " + error);
-          }
-        )
 
-    fetch(recipesUrl + '/images/' + id)
-            .then(response => response.blob())
-            .then(images => {
-                // Then create a local URL for that image and print it
-                let imageUrl = URL.createObjectURL(images);
-                console.log(imageUrl);
-                setImageUrl(imageUrl);
-            })
-  }
+  useEffect(() => {
+    if (recipe === '') {
+        fetch(recipesUrl + "/recipes/" + recipeId)
+            .then(res => res.json())
+            .then(
+              (result) => {
+                setRecipe(result);
+                setRecipeName(result.name)
+                console.log("result: " + JSON.stringify(result));
+              },
+              (error) => {
+                console.log("error: " + error);
+              }
+            )
+    }
+    if (imageUrl === '' && recipeHasImage) {
+      fetch(recipesUrl + '/images/' + recipeId)
+              .then(response => response.blob())
+              .then(
+                (images) => {
+                  //create a local URL for that image and print it
+                  let imageUrl = URL.createObjectURL(images);
+                  console.log(imageUrl);
+                  setImageUrl(imageUrl);
+              },
+              (error) => {
+                console.error("Image for recipe not found", error);
+                setRecipeHasImage(false);
+              }
+            )
+    }
+  });
 
   if (recipe && imageUrl) {
     return (
@@ -93,30 +97,32 @@ export default function RecipeDetailsComponent(props) {
         <h2>{recipe.name}</h2>
         <br></br>
         <p className="RecipeDetails">{recipe.content}</p>
-        <img src={imageUrl}></img>
+        <Image src={imageUrl} />
         <br></br>
-        {/*
+
         <Button variant="primary" type="submit" onClick={handleShow}>
           Edit
         </Button>
-        */}
+
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>{recipe.name}</Modal.Title>
+            <Modal.Title>
+              <Form.Group controlId="updateRecipeForm.ControlTextarea1">
+                <Form.Control as="textarea" defaultValue={recipe.name} onChange={event => setRecipeName(event.target.value)} />
+              </Form.Group>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {/*
-            TODO: handle submitting the updated recipe to the api
-            TODO: form is being submitted even without showing modal
-            */}
             <Form>
-              <Form.Group controlId="updateRecipeForm.ControlTextarea1">
+              <Form.Group controlId="updateRecipeForm.ControlTextarea2">
                 <Form.Control
-                  as="textarea" defaultValue={recipe.content} rows="1"
+                  as="textarea" defaultValue={recipe.content} rows="10"
                   onChange={event => setRecipeContent(event.target.value)}
-                  body={recipe.content}
                 />
-                <Button variant="primary" type="submit">
+                <Form.Group controlId="updateRecipeForm.ControlTextarea3">
+                  <Form.Control type="password" placeholder="Password" onChange={event => setPassword(event.target.value)} />
+                </Form.Group>
+                <Button type="submit" onClick={() => handleSubmit(recipeContent, recipeName, password, recipeId)}>
                   Save Changes
                 </Button>
               </Form.Group>
@@ -126,7 +132,6 @@ export default function RecipeDetailsComponent(props) {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-
           </Modal.Footer>
         </Modal>
       </Container>

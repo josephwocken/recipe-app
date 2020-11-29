@@ -123,27 +123,24 @@ class CreateRecipeComponent extends React.Component {
          <br></br>
           <Form onSubmit={this.handleSubmit}>
             <Form.Group controlId="createRecipeForm.ControlTextarea1">
-              <Form.Label>Recipe Name</Form.Label>
-              <Form.Control as="textarea" rows="1" onChange={this.handleRecipeNameChange} />
+              <Form.Control as="textarea" rows="1" placeholder="Name" onChange={this.handleRecipeNameChange} />
             </Form.Group>
             <Form.Group controlId="createRecipeForm.ControlTextarea2">
-              <Form.Label>Recipe Contents</Form.Label>
-              <Form.Control as="textarea" rows="5" onChange={this.handleRecipeContentChange} />
+              <Form.Control as="textarea" rows="5" placeholder="Contents" onChange={this.handleRecipeContentChange} />
             </Form.Group>
             <Form.Group controlId="createRecipeForm.ControlTextarea3">
-              <Form.Label>Recipe Pictures</Form.Label>
                 <ImageUploader
                   withIcon={true}
-                  buttonText='Choose images'
+                  buttonText='Choose image'
                   withPreview={true}
                   onChange={this.onDrop}
+                  singleImage={true}
                   imgExtension={['.jpg', '.gif', '.png', '.gif']}
                   maxFileSize={5242880}
                 />
             </Form.Group>
             <Form.Group controlId="createRecipeForm.ControlTextarea4">
-              <Form.Label>Password</Form.Label>
-              <Form.Control as="textarea" rows="1" onChange={this.handlePasswordChange} />
+              <Form.Control type="password" placeholder="Password" onChange={this.handlePasswordChange} />
             </Form.Group>
             {isRecipeSubmitted
               ? <Button variant="primary" type="submit" disabled>Submit</Button>

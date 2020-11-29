@@ -33,9 +33,7 @@ class HomeComponent extends React.Component {
             <Route path="/createrecipe">
               <CreateRecipeComponent />
             </Route>
-            <Route path="/recipes/:recipeId" something={this.props.params}>
-              <RecipeDetailsComponent />
-            </Route>
+            <Route path="/recipes/:recipeId" children={<RecipeDetailsComponent />} />
             <Route path="/health">
               <HealthComponent />
             </Route>
