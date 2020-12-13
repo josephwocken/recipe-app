@@ -80,6 +80,7 @@ class ListRecipesComponent extends React.Component {
     } else if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
+      recipes.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
       return (
         <div>
           <ListGroup>
@@ -89,7 +90,7 @@ class ListRecipesComponent extends React.Component {
                   <Row>
                     <Col xs={6}>
                       <Link to={"/recipes/" + recipe.recipeId}>
-                        {recipe.recipeId} - {recipe.name}
+                        {recipe.name}
                       </Link>
                     </Col>
                     <Col>
