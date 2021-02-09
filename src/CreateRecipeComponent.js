@@ -140,7 +140,7 @@ class CreateRecipeComponent extends React.Component {
                 />
             </Form.Group>
             <Form.Group controlId="createRecipeForm.ControlTextarea4">
-              <Form.Control type="password" placeholder="Password" onChange={this.handlePasswordChange} />
+              <Form.Control type="text" placeholder="Password" onChange={this.handlePasswordChange} />
             </Form.Group>
             {isRecipeSubmitted
               ? <Button variant="primary" type="submit" disabled>Submit</Button>

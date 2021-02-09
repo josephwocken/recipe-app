@@ -120,7 +120,7 @@ export default function RecipeDetailsComponent() {
                   onChange={event => setRecipeContent(event.target.value)}
                 />
                 <Form.Group controlId="updateRecipeForm.ControlTextarea3">
-                  <Form.Control type="password" placeholder="Password" onChange={event => setPassword(event.target.value)} />
+                  <Form.Control type="text" placeholder="Password" onChange={event => setPassword(event.target.value)} />
                 </Form.Group>
                 <Button type="submit" onClick={() => handleSubmit(recipeContent, recipeName, password, recipeId)}>
                   Save Changes
