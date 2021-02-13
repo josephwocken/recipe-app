@@ -30,8 +30,8 @@ sudo apt install default-jdk
 ### Build
 ```
 cd ~/dev/recipes-app
-npm run build
 rm Build.zip
+npm run build
 PS C:\Users\josep\dev\recipe-app> $compress = @{
 Path = "build\*"
 CompressionLevel = "Fastest"
