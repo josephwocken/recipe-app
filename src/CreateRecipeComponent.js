@@ -3,6 +3,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import ImageUploader from 'react-images-upload';
+import ReactDOM from 'react-dom';
+import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
+import 'draft-js/dist/Draft.css';
 
 class CreateRecipeComponent extends React.Component {
   constructor(props) {
@@ -12,9 +15,12 @@ class CreateRecipeComponent extends React.Component {
       recipeContent: '',
       isRecipeSubmitted: false,
       password: '',
-      pictures: []
+      pictures: [],
+      editorState: EditorState.createEmpty()
     };
 
+    this.onChange = editorState => this.setState({editorState});
+    this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.handleRecipeContentChange = this.handleRecipeContentChange.bind(this);
     this.handleRecipeNameChange = this.handleRecipeNameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -28,13 +34,6 @@ class CreateRecipeComponent extends React.Component {
         pictures: this.state.pictures.concat(picture),
     });
   }
-
-  //TODO: handle deleting image attachments
-  // onDeleteImage() {
-  //   this.setState({
-  //
-  //   });
-  // }
 
   handleRecipeContentChange(event) {
     this.setState({recipeContent: event.target.value});
@@ -50,13 +49,16 @@ class CreateRecipeComponent extends React.Component {
 
   handlePictureSubmit(recipeId) {
     const pictures = this.state.pictures;
+    if (pictures.length === 0) {
+      console.log("Not uploading image because it was not provided.");
+      return Promise.resolve();
+    }
     const formData = new FormData()
     // this has to match val uploadedImageFile: UploadedFile = form.file("image")
     // in the ratpack server
     formData.append('image', pictures[0])
     console.log("form data: " + formData);
     console.log("recipe id: " + recipeId);
-    //TODO: post this imave to the api
     var recipesUrl = 'http://localhost:5050';
     if (process.env.NODE_ENV === 'production') {
       recipesUrl = 'https://www.sophiesrecipes.com:5050';
@@ -80,9 +82,17 @@ class CreateRecipeComponent extends React.Component {
     const recipeName = this.state.recipeName;
     const recipeContent = this.state.recipeContent;
     const password = this.state.password;
+    const contentState = this.state.editorState.getCurrentContent();
+    const rawState = convertToRaw(contentState);
+    console.log("raw editor state: " + JSON.stringify(rawState));
+    // const recipe = {
+    //   name: recipeName,
+    //   content: recipeContent,
+    //   password: password
+    // }
     const recipe = {
       name: recipeName,
-      content: recipeContent,
+      content: JSON.stringify(rawState),
       password: password
     }
     console.log("Recipe to upload: " + JSON.stringify(recipe));
@@ -110,14 +120,24 @@ class CreateRecipeComponent extends React.Component {
       })
       .catch(error => {
         console.error('There has been a problem with your fetch operation:', error);
-        alert('Password did not work.');
+        alert('Failed to create recipe. Please try again.');
       });
     this.setState({isRecipeSubmitted: true})
   }
 
+  handleKeyCommand(command, editorState) {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+
+    if (newState) {
+      this.onChange(newState);
+      return 'handled';
+    }
+
+    return 'not-handled';
+  }
+
   render() {
     const { isRecipeSubmitted, pictures } = this.state;
-    console.log("pictures: " + pictures);
      return (
        <Container>
          <br></br>
@@ -126,7 +146,12 @@ class CreateRecipeComponent extends React.Component {
               <Form.Control as="textarea" rows="1" placeholder="Name" onChange={this.handleRecipeNameChange} />
             </Form.Group>
             <Form.Group controlId="createRecipeForm.ControlTextarea2">
-              <Form.Control as="textarea" rows="5" placeholder="Contents" onChange={this.handleRecipeContentChange} />
+              <Editor
+                editorState={this.state.editorState}
+                handleKeyCommand={this.handleKeyCommand}
+                onChange={this.onChange}
+              />
+              {/* <Form.Control as="textarea" rows="5" placeholder="Contents" onChange={this.handleRecipeContentChange} /> */}
             </Form.Group>
             <Form.Group controlId="createRecipeForm.ControlTextarea3">
                 <ImageUploader

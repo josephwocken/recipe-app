@@ -6,12 +6,16 @@ import Modal from 'react-bootstrap/Modal';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import './RecipeDetailsComponent.css';
+import ReactDOM from 'react-dom';
+import { Editor, EditorState, RichUtils, ContentState, convertFromRaw, convertToRaw } from 'draft-js';
+import 'draft-js/dist/Draft.css';
 
-function handleSubmit(updatedRecipeContent, updatedRecipeName, password, recipeId) {
+function handleSubmit(rawRecipeEditorContent, updatedRecipeName, password, recipeId) {
+  console.log("raw editor state: " + JSON.stringify(rawRecipeEditorContent));
   const recipe = {
     recipeId: recipeId,
     name: updatedRecipeName,
-    content: updatedRecipeContent,
+    content: JSON.stringify(rawRecipeEditorContent),
     password: password
   }
   var recipesUrl = 'http://localhost:5050';
@@ -37,7 +41,6 @@ function handleSubmit(updatedRecipeContent, updatedRecipeName, password, recipeI
     });
 }
 
-//TODO: this is hitting the api at least 5 times
 export default function RecipeDetailsComponent() {
   const [recipe, setRecipe] = useState('');
   const [show, setShow] = useState(false);
@@ -46,13 +49,13 @@ export default function RecipeDetailsComponent() {
   const [imageUrl, setImageUrl] = useState('');
   const [recipeHasImage, setRecipeHasImage] = useState(true);
   const [password, setPassword] = useState('');
-
+  const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText('Hello')));
+  const [editorInitCount, setEditorInitCount] = useState(0);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   let { recipeId } = useParams();
-
-  var recipesUrl = 'http://localhost:5050'
+  var recipesUrl = 'http://localhost:5050';
   if (process.env.NODE_ENV === 'production') {
     recipesUrl = 'https://www.sophiesrecipes.com:5050'
   }
@@ -64,7 +67,7 @@ export default function RecipeDetailsComponent() {
             .then(
               (result) => {
                 setRecipe(result);
-                setRecipeName(result.name)
+                setRecipeName(result.name);
                 console.log("result: " + JSON.stringify(result));
               },
               (error) => {
@@ -88,7 +91,47 @@ export default function RecipeDetailsComponent() {
               }
             )
     }
+    if (editorInitCount < 10) {
+      var contentState = null
+      if (recipe && recipe.content) {
+        console.log("recipe content: " + JSON.stringify(recipe));
+        contentState = convertFromRaw(JSON.parse(recipe.content));
+        console.log("content state: " + JSON.stringify(contentState));
+      } else {
+        console.log("recipe not loaded yet");
+      }
+      let myEditorState = EditorState.createEmpty();
+      if (contentState) {
+        myEditorState = EditorState.createWithContent(contentState);
+        console.log("my editor state: " + JSON.stringify(myEditorState));
+      }
+
+      setEditorState(myEditorState);
+      let currentCount = editorInitCount;
+      let nextCount = currentCount + 1;
+      console.log("setting editor state for " + nextCount + " time.");
+      setEditorInitCount(nextCount);
+    } else {
+      console.log("not setting editor state");
+    }
   });
+
+  console.log("editor state: " + JSON.stringify(editorState));
+
+  function handleKeyCommand(command, editorState) {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      setEditorState(newState);
+      return 'handled';
+    }
+    return 'not-handled';
+  }
+
+  function convertEditorStateToRaw() {
+    const contentState = editorState.getCurrentContent();
+    const rawState = convertToRaw(contentState);
+    return rawState;
+  }
 
   if (recipe && imageUrl) {
     return (
@@ -96,7 +139,8 @@ export default function RecipeDetailsComponent() {
         <br></br>
         <h2>{recipe.name}</h2>
         <br></br>
-        <p className="RecipeDetails">{recipe.content}</p>
+        {/*<p className="RecipeDetails">{recipe.content}</p> */}
+        <Editor editorState={editorState} onChange={setEditorState} />
         <Image src={imageUrl} />
         <br></br>
 
@@ -108,21 +152,30 @@ export default function RecipeDetailsComponent() {
           <Modal.Header closeButton>
             <Modal.Title>
               <Form.Group controlId="updateRecipeForm.ControlTextarea1">
-                <Form.Control as="textarea" defaultValue={recipe.name} onChange={event => setRecipeName(event.target.value)} />
+                <Form.Control
+                  as="textarea" defaultValue={recipe.name}
+                  onChange={ event => setRecipeName(event.target.value) }
+                />
               </Form.Group>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Form.Group controlId="updateRecipeForm.ControlTextarea2">
-                <Form.Control
+                {/*<Form.Control
                   as="textarea" defaultValue={recipe.content} rows="10"
                   onChange={event => setRecipeContent(event.target.value)}
+                />*/}
+                <Editor
+                  editorState={editorState}
+                  onChange={setEditorState}
+                  handleKeyCommand={handleKeyCommand}
                 />
+
                 <Form.Group controlId="updateRecipeForm.ControlTextarea3">
                   <Form.Control type="text" placeholder="Password" onChange={event => setPassword(event.target.value)} />
                 </Form.Group>
-                <Button type="submit" onClick={() => handleSubmit(recipeContent, recipeName, password, recipeId)}>
+                <Button type="submit" onClick={() => handleSubmit(convertEditorStateToRaw(), recipeName, password, recipeId)}>
                   Save Changes
                 </Button>
               </Form.Group>
