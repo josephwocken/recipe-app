@@ -103,13 +103,12 @@ export default function RecipeDetailsComponent() {
           myEditorState = EditorState.createWithContent(contentState);
           console.log("my editor state: " + JSON.stringify(myEditorState));
         }
-
         setEditorState(myEditorState);
       }
     } else {
       console.log("not setting editor state");
     }
-  });
+  }, [editorState, recipe]);
 
   console.log("editor state: " + JSON.stringify(editorState));
 
