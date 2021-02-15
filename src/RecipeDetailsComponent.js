@@ -49,8 +49,7 @@ export default function RecipeDetailsComponent() {
   const [imageUrl, setImageUrl] = useState('');
   const [recipeHasImage, setRecipeHasImage] = useState(true);
   const [password, setPassword] = useState('');
-  const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText('Hello')));
-  const [editorInitCount, setEditorInitCount] = useState(0);
+  const [editorState, setEditorState] = useState(null);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -91,26 +90,22 @@ export default function RecipeDetailsComponent() {
               }
             )
     }
-    if (editorInitCount < 10) {
-      var contentState = null
+  });
+
+  useEffect(() => {
+    if (null === editorState) {
       if (recipe && recipe.content) {
         console.log("recipe content: " + JSON.stringify(recipe));
-        contentState = convertFromRaw(JSON.parse(recipe.content));
+        let contentState = convertFromRaw(JSON.parse(recipe.content));
         console.log("content state: " + JSON.stringify(contentState));
-      } else {
-        console.log("recipe not loaded yet");
-      }
-      let myEditorState = EditorState.createEmpty();
-      if (contentState) {
-        myEditorState = EditorState.createWithContent(contentState);
-        console.log("my editor state: " + JSON.stringify(myEditorState));
-      }
+        let myEditorState = EditorState.createEmpty();
+        if (contentState) {
+          myEditorState = EditorState.createWithContent(contentState);
+          console.log("my editor state: " + JSON.stringify(myEditorState));
+        }
 
-      setEditorState(myEditorState);
-      let currentCount = editorInitCount;
-      let nextCount = currentCount + 1;
-      console.log("setting editor state for " + nextCount + " time.");
-      setEditorInitCount(nextCount);
+        setEditorState(myEditorState);
+      }
     } else {
       console.log("not setting editor state");
     }
@@ -140,7 +135,11 @@ export default function RecipeDetailsComponent() {
         <h2>{recipe.name}</h2>
         <br></br>
         {/*<p className="RecipeDetails">{recipe.content}</p> */}
-        <Editor editorState={editorState} onChange={setEditorState} />
+        <Editor
+          editorState={editorState}
+          onChange={setEditorState}
+          readOnly={true}
+        />
         <Image src={imageUrl} />
         <br></br>
 
