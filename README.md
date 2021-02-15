@@ -69,3 +69,33 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+
+Errors:
+DraftEditorContents-core.react.js:119 Uncaught (in promise) TypeError: Cannot read property 'getCurrentContent' of null
+    at r.a.render (DraftEditorContents-core.react.js:119)
+    at Fa (react-dom.production.min.js:182)
+    at Ka (react-dom.production.min.js:181)
+    at vu (react-dom.production.min.js:263)
+    at sl (react-dom.production.min.js:246)
+    at ul (react-dom.production.min.js:246)
+    at Zu (react-dom.production.min.js:239)
+    at react-dom.production.min.js:123
+    at t.unstable_runWithPriority (scheduler.production.min.js:19)
+    at Ui (react-dom.production.min.js:122)
+
+
+    _proto.render = function render() {
+      var _this$props = this.props,
+          blockRenderMap = _this$props.blockRenderMap,
+          blockRendererFn = _this$props.blockRendererFn,
+          blockStyleFn = _this$props.blockStyleFn,
+          customStyleMap = _this$props.customStyleMap,
+          customStyleFn = _this$props.customStyleFn,
+          editorState = _this$props.editorState,
+          editorKey = _this$props.editorKey,
+          preventScroll = _this$props.preventScroll,
+          textDirectionality = _this$props.textDirectionality;
+      var content = editorState.getCurrentContent();
+      var selection = editorState.getSelection();
+      var forceSelection = editorState.mustForceSelection();
