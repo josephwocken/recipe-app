@@ -10,7 +10,8 @@ import ReactDOM from 'react-dom';
 import { Editor, EditorState, RichUtils, ContentState, convertFromRaw, convertToRaw } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
-function handleSubmit(rawRecipeEditorContent, updatedRecipeName, password, recipeId) {
+function handleSubmit(event, rawRecipeEditorContent, updatedRecipeName, password, recipeId) {
+  event.preventDefault();
   console.log("raw editor state: " + JSON.stringify(rawRecipeEditorContent));
   const recipe = {
     recipeId: recipeId,
@@ -49,7 +50,7 @@ export default function RecipeDetailsComponent() {
   const [imageUrl, setImageUrl] = useState('');
   const [recipeHasImage, setRecipeHasImage] = useState(true);
   const [password, setPassword] = useState('');
-  const [editorState, setEditorState] = useState(null);
+  const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText('')));
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -93,7 +94,10 @@ export default function RecipeDetailsComponent() {
   });
 
   useEffect(() => {
-    if (null === editorState) {
+    if (null === editorState
+      || null === editorState.getCurrentContent()
+      || editorState.getCurrentContent().getPlainText() === '') {
+
       if (recipe && recipe.content) {
         console.log("recipe content: " + JSON.stringify(recipe));
         let contentState = convertFromRaw(JSON.parse(recipe.content));
@@ -113,6 +117,9 @@ export default function RecipeDetailsComponent() {
   console.log("editor state: " + JSON.stringify(editorState));
 
   function handleKeyCommand(command, editorState) {
+    if (null === editorState) {
+      return 'not-handled';
+    }
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       setEditorState(newState);
@@ -122,9 +129,11 @@ export default function RecipeDetailsComponent() {
   }
 
   function convertEditorStateToRaw() {
-    const contentState = editorState.getCurrentContent();
-    const rawState = convertToRaw(contentState);
-    return rawState;
+    if (null !== editorState) {
+      const contentState = editorState.getCurrentContent();
+      const rawState = convertToRaw(contentState);
+      return rawState;
+    }
   }
 
   if (recipe && imageUrl) {
@@ -164,16 +173,27 @@ export default function RecipeDetailsComponent() {
                   as="textarea" defaultValue={recipe.content} rows="10"
                   onChange={event => setRecipeContent(event.target.value)}
                 />*/}
-                <Editor
+                {/*<Editor
                   editorState={editorState}
                   onChange={setEditorState}
                   handleKeyCommand={handleKeyCommand}
-                />
+                />*/}
 
                 <Form.Group controlId="updateRecipeForm.ControlTextarea3">
                   <Form.Control type="text" placeholder="Password" onChange={event => setPassword(event.target.value)} />
                 </Form.Group>
-                <Button type="submit" onClick={() => handleSubmit(convertEditorStateToRaw(), recipeName, password, recipeId)}>
+                <Button
+                  type="submit"
+                  onClick={ event =>
+                   handleSubmit(
+                      event,
+                      convertEditorStateToRaw(),
+                      recipeName,
+                      password,
+                      recipeId
+                    )
+                  }
+                >
                   Save Changes
                 </Button>
               </Form.Group>
