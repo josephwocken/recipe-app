@@ -142,12 +142,12 @@ export default function RecipeDetailsComponent() {
         <br></br>
         <h2>{recipe.name}</h2>
         <br></br>
-        {/*<p className="RecipeDetails">{recipe.content}</p> */}
-        <Editor
+        <p className="RecipeDetails">{recipe.content}</p>
+        {/*<Editor
           editorState={editorState}
           onChange={setEditorState}
           readOnly={true}
-        />
+        />*/}
         <Image src={imageUrl} />
         <br></br>
 
@@ -173,11 +173,11 @@ export default function RecipeDetailsComponent() {
                   as="textarea" defaultValue={recipe.content} rows="10"
                   onChange={event => setRecipeContent(event.target.value)}
                 />*/}
-                {/*<Editor
+                <Editor
                   editorState={editorState}
                   onChange={setEditorState}
                   handleKeyCommand={handleKeyCommand}
-                />*/}
+                />
 
                 <Form.Group controlId="updateRecipeForm.ControlTextarea3">
                   <Form.Control type="text" placeholder="Password" onChange={event => setPassword(event.target.value)} />

@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import ImageUploader from 'react-images-upload';
 import ReactDOM from 'react-dom';
+// import './CreateRecipeComponent.css';
 import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
@@ -150,6 +151,7 @@ class CreateRecipeComponent extends React.Component {
                 editorState={this.state.editorState}
                 handleKeyCommand={this.handleKeyCommand}
                 onChange={this.onChange}
+                placeholder='Recipe'
               />
               {/* <Form.Control as="textarea" rows="5" placeholder="Contents" onChange={this.handleRecipeContentChange} /> */}
             </Form.Group>
