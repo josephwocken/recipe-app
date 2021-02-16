@@ -142,12 +142,12 @@ export default function RecipeDetailsComponent() {
         <br></br>
         <h2>{recipe.name}</h2>
         <br></br>
-        <p className="RecipeDetails">{recipe.content}</p>
-        {/*<Editor
+        {/*<p className="RecipeDetails">{recipe.content}</p> */}
+        <Editor
           editorState={editorState}
           onChange={setEditorState}
           readOnly={true}
-        />*/}
+        />
         <Image src={imageUrl} />
         <br></br>
 
