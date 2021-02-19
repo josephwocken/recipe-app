@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import ImageUploader from 'react-images-upload';
 import ReactDOM from 'react-dom';
-// import './CreateRecipeComponent.css';
+// import './CreateRecipeComponent.css'; also styles for details page. this must be global.
 import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
@@ -85,12 +85,6 @@ class CreateRecipeComponent extends React.Component {
     const password = this.state.password;
     const contentState = this.state.editorState.getCurrentContent();
     const rawState = convertToRaw(contentState);
-    console.log("raw editor state: " + JSON.stringify(rawState));
-    // const recipe = {
-    //   name: recipeName,
-    //   content: recipeContent,
-    //   password: password
-    // }
     const recipe = {
       name: recipeName,
       content: JSON.stringify(rawState),

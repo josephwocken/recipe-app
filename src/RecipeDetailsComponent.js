@@ -11,8 +11,6 @@ import { Editor, EditorState, RichUtils, ContentState, convertFromRaw, convertTo
 import 'draft-js/dist/Draft.css';
 
 function handleSubmit(event, rawRecipeEditorContent, updatedRecipeName, password, recipeId) {
-  event.preventDefault();
-  console.log("raw editor state: " + JSON.stringify(rawRecipeEditorContent));
   const recipe = {
     recipeId: recipeId,
     name: updatedRecipeName,
@@ -38,7 +36,6 @@ function handleSubmit(event, rawRecipeEditorContent, updatedRecipeName, password
     })
     .catch(error => {
       console.error('There has been a problem with the update operation:', error);
-      // alert('Password did not work.'); why is this not working?
     });
 }
 
