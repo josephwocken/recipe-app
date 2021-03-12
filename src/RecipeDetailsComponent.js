@@ -9,6 +9,7 @@ import './RecipeDetailsComponent.css';
 import ReactDOM from 'react-dom';
 import { Editor, EditorState, RichUtils, ContentState, convertFromRaw, convertToRaw } from 'draft-js';
 import 'draft-js/dist/Draft.css';
+import ListRecipesComponent from './ListRecipesComponent';
 
 function handleSubmit(event, rawRecipeEditorContent, updatedRecipeName, password, recipeId) {
   const recipe = {
@@ -47,6 +48,7 @@ export default function RecipeDetailsComponent() {
   const [imageUrl, setImageUrl] = useState('');
   const [recipeHasImage, setRecipeHasImage] = useState(true);
   const [password, setPassword] = useState('');
+  const [recipeDeleted, setRecipeDeleted] = useState(false);
   const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText('')));
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -96,22 +98,15 @@ export default function RecipeDetailsComponent() {
       || editorState.getCurrentContent().getPlainText() === '') {
 
       if (recipe && recipe.content) {
-        console.log("recipe content: " + JSON.stringify(recipe));
         let contentState = convertFromRaw(JSON.parse(recipe.content));
-        console.log("content state: " + JSON.stringify(contentState));
         let myEditorState = EditorState.createEmpty();
         if (contentState) {
           myEditorState = EditorState.createWithContent(contentState);
-          console.log("my editor state: " + JSON.stringify(myEditorState));
         }
         setEditorState(myEditorState);
       }
-    } else {
-      console.log("not setting editor state");
     }
   }, [editorState, recipe]);
-
-  console.log("editor state: " + JSON.stringify(editorState));
 
   function handleKeyCommand(command, editorState) {
     if (null === editorState) {
@@ -133,13 +128,38 @@ export default function RecipeDetailsComponent() {
     }
   }
 
-  if (recipe && imageUrl) {
+  function handleDelete(event) {
+    event.preventDefault();
+    var baseUrl = 'http://localhost:5050';
+    if (process.env.NODE_ENV === 'production') {
+      baseUrl = 'https://www.sophiesrecipes.com:5050';
+    }
+
+    var fullUrl = baseUrl + "/recipes/" + recipe.recipeId + "?pwd=" + password
+    fetch(fullUrl, {
+      method: 'DELETE',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to delete recipe')
+        } else {
+          console.log(`setting recipe deleted to true`);
+          setRecipeDeleted(true);
+        }
+      })
+      .catch(error => {
+        alert('Failed to delete recipe')
+      })
+  }
+
+  if (recipeDeleted) {
+    return (<ListRecipesComponent />);
+  } else if (recipe && imageUrl) {
     return (
       <Container>
         <br></br>
         <h2>{recipe.name}</h2>
         <br></br>
-        {/*<p className="RecipeDetails">{recipe.content}</p> */}
         <Editor
           editorState={editorState}
           onChange={setEditorState}
@@ -166,10 +186,6 @@ export default function RecipeDetailsComponent() {
           <Modal.Body>
             <Form>
               <Form.Group controlId="updateRecipeForm.ControlTextarea2">
-                {/*<Form.Control
-                  as="textarea" defaultValue={recipe.content} rows="10"
-                  onChange={event => setRecipeContent(event.target.value)}
-                />*/}
                 <Editor
                   editorState={editorState}
                   onChange={setEditorState}
@@ -192,6 +208,9 @@ export default function RecipeDetailsComponent() {
                   }
                 >
                   Save Changes
+                </Button>
+                <Button variant="secondary" type="submit" onClick={ event => handleDelete(event) }>
+                  Delete
                 </Button>
               </Form.Group>
             </Form>

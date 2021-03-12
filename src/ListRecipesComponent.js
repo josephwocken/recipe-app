@@ -15,7 +15,6 @@ class ListRecipesComponent extends React.Component {
       recipes: [],
       recipeDeleted: false
     };
-    this.handleDelete = this.handleDelete.bind(this);
     this.fetchRecipes = this.fetchRecipes.bind(this);
   }
 
@@ -50,29 +49,6 @@ class ListRecipesComponent extends React.Component {
     this.fetchRecipes();
   }
 
-  handleDelete(recipeId) {
-    console.log("deleting recipe with id: " + recipeId)
-    var recipesUrl = 'http://localhost:5050';
-    if (process.env.NODE_ENV === 'production') {
-      recipesUrl = 'https://www.sophiesrecipes.com:5050';
-    }
-    fetch(recipesUrl + "/recipes/" + recipeId, {
-      method: 'DELETE',
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to delete recipe')
-        } else {
-          this.setState({
-            recipeDeleted: true
-          });
-        }
-      })
-      .catch(error => {
-        alert('Failed to delete recipe')
-      })
-  }
-
   render() {
     const { error, isLoaded, recipes, recipeDeleted } = this.state;
     if (error) {
@@ -92,11 +68,6 @@ class ListRecipesComponent extends React.Component {
                       <Link to={"/recipes/" + recipe.recipeId}>
                         {recipe.name}
                       </Link>
-                    </Col>
-                    <Col>
-                      <Button variant="secondary" onClick={() => this.handleDelete(recipe.recipeId)}>
-                        Delete
-                      </Button>
                     </Col>
                   </Row>
                 </Container>

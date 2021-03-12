@@ -7,6 +7,8 @@ import ReactDOM from 'react-dom';
 // import './CreateRecipeComponent.css'; also styles for details page. this must be global.
 import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import 'draft-js/dist/Draft.css';
+import ListRecipesComponent from './ListRecipesComponent';
+
 
 class CreateRecipeComponent extends React.Component {
   constructor(props) {
@@ -34,6 +36,18 @@ class CreateRecipeComponent extends React.Component {
     this.setState({
         pictures: this.state.pictures.concat(picture),
     });
+  }
+
+  _onBoldClick() {
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
+  }
+
+  _onItalicClick() {
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'ITALIC'));
+  }
+
+  _onUnderlineClick() {
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE'));
   }
 
   handleRecipeContentChange(event) {
@@ -133,6 +147,9 @@ class CreateRecipeComponent extends React.Component {
 
   render() {
     const { isRecipeSubmitted, pictures } = this.state;
+    if (isRecipeSubmitted) {
+      return(<ListRecipesComponent />);
+    } else {
      return (
        <Container>
          <br></br>
@@ -140,6 +157,17 @@ class CreateRecipeComponent extends React.Component {
             <Form.Group controlId="createRecipeForm.ControlTextarea1">
               <Form.Control as="textarea" rows="1" placeholder="Name" onChange={this.handleRecipeNameChange} />
             </Form.Group>
+            <Button variant="outline-info" size="sm" onClick={this._onBoldClick.bind(this)}>
+              bold
+            </Button>
+            <Button variant="outline-info" size="sm" onClick={this._onItalicClick.bind(this)}>
+              italics
+            </Button>
+            <Button variant="outline-info" size="sm" onClick={this._onUnderlineClick.bind(this)}>
+              underline
+            </Button>
+            <br></br>
+            <br></br>
             <Form.Group controlId="createRecipeForm.ControlTextarea2">
               <Editor
                 editorState={this.state.editorState}
@@ -170,6 +198,7 @@ class CreateRecipeComponent extends React.Component {
           </Form>
         </Container>
       )
+    }
   }
 }
 

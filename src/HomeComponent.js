@@ -27,6 +27,7 @@ class HomeComponent extends React.Component {
           </Nav>
 
           <Switch>
+
             <Route path="/listrecipes">
               <ListRecipesComponent />
             </Route>
@@ -36,6 +37,9 @@ class HomeComponent extends React.Component {
             <Route path="/recipes/:recipeId" children={<RecipeDetailsComponent />} />
             <Route path="/health">
               <HealthComponent />
+            </Route>
+            <Route path="/">
+              <ListRecipesComponent />
             </Route>
           </Switch>
         </div>
